@@ -288,15 +288,23 @@ VALUES
 
 --🟢 Stage 1 — Basic SELECT (10 Queries)
 
-Practice simple data retrieval.
+--🟢 Stage 1 — Basic SELECT (10 Queries)
 
-Show all customers.
+--Practice simple data retrieval.
 
-Show first_name and email of all customers.
+--Show all customers.
+ select * from customers
 
-Show all products with price greater than 500.
+--Show first_name and email of all customers.
+select first_name,email from customers
 
-Show all employees from department 101.
+--Show all products with price greater than 500.
+select * from products where price >500
+
+
+--Show all employees from department 101.
+
+select * from employees where department_id='101'
 
 Show products with stock less than 10.
 
