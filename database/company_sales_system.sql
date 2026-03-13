@@ -1,18 +1,17 @@
 
-CREATE DATABASE company_sale_system;
-use company_sale_system;
+--CREATE DATABASE company_sale_system;
+--use company_sale_system;
 
 -- customers,employees,department ,products,orders_items are entitys and orders is a relationship between customers and products
 
 CREATE TABLE customers(
-    		customer_id INT PRIMARY KEY IDENTITY(1,1),
-            		first_name VARCHAR(50) NOT NULL,
-                    		last_name VARCHAR(50) NOT NULL,
-                            		email VARCHAR(50) NOT NULL UNIQUE,
-                                    		phone VARCHAR(50) NOT NULL,
-                                            		created_at DATETIME NOT NULL DEFAULT GETDATE()
-                                                    		)
-)
+		customer_id INT PRIMARY KEY IDENTITY(1,1),
+		first_name VARCHAR(50) NOT NULL,
+		last_name VARCHAR(50) NOT NULL,
+		email VARCHAR(50) NOT NULL UNIQUE,
+		phone VARCHAR(50) NOT NULL,
+		created_at DATETIME NOT NULL DEFAULT GETDATE()
+		)
 
 		drop table customers
 
@@ -288,8 +287,6 @@ VALUES
 
 --🟢 Stage 1 — Basic SELECT (10 Queries)
 
---🟢 Stage 1 — Basic SELECT (10 Queries)
-
 --Practice simple data retrieval.
 
 --Show all customers.
@@ -306,121 +303,388 @@ select * from products where price >500
 
 select * from employees where department_id='101'
 
-Show products with stock less than 10.
+--Show products with stock less than 10.
+select * from products where stock<10
 
-Show customers ordered by created_at (latest first).
 
-Show unique department ids from employees table.
+--Show customers ordered by created_at (latest first).
+select * from customers order by created_at desc
 
-Show top 5 most expensive products.
 
-Show orders placed today.
+--Show unique department ids from employees table.
+select distinct department_id  from employees
 
-Show product name and price sorted by price descending.
+--Show top 5 most expensive products.
+select top 5 * from products order by price desc
 
-🟡 Stage 2 — Filtering & Conditions (10 Queries)
+--Show orders placed today.
+select * from orders where CAST(order_date as DATE)=CAST(GETDATE() AS DATE)
 
-Practice WHERE, LIKE, IN, BETWEEN.
+--Show product name and price sorted by price descending.
+SELECT PRODUCT_NAME,PRICE FROM PRODUCTS ORDER BY PRICE DESC
 
-Find customers whose first name starts with A.
 
-Find products priced between 500 and 2000.
+--****************************************************************
 
-Find orders placed in the last 30 days.
+--🟡 Stage 2 — Filtering & Conditions (10 Queries)
 
-Find employees whose last name contains "son".
+--Practice WHERE, LIKE, IN, BETWEEN.
 
-Find products where stock is 0.
+--Find customers whose first name starts with A.
+SELECT  * from customers where  first_name like 'A%'
 
-Find customers with gmail email addresses.
+--Find products priced between 500 and 2000.
+select * from products where price between 500 AND 2000
 
-Find orders for specific customers (customer_id 1,2,3).
+--Find orders placed in the last 30 days.
+select * from orders where order_date >=DATEADD(DAY,-30,GETDATE())
 
-Find employees not in department 101.
+SELECT * FROM ORDERS
 
-Find products priced greater than the average price.
+--Find employees whose last name contains "son".
+select * from employees where last_name like 's%'
 
-Find orders placed after 2024-01-01.
+--Find products where stock is 0.
+select * from products where stock<=0
 
-🔵 Stage 3 — JOIN Queries (15 Queries)
+--Find customers with gmail email addresses.
 
-Now we combine tables.
+select * from customers where email like '%@gmail.com%'
 
-Show all orders with customer names.
 
-Show order details with product names.
+--Find orders for specific customers (customer_id 1,2,3).
 
-Show:
 
-customer name
-order id
-order date
+select * from customers where customer_id in(1,2,3)
 
-Show products purchased in each order.
+--Find employees not in department 101.
+select * from employees where department_id !=101
 
-Show:
+--Find products priced greater than the average price.
+select * from products where price>(select avg(price) from products)
 
-order_id
-product_name
-quantity
-price
 
-Show customers who placed orders.
+--Find orders placed after 2024-01-01.
+select * from orders where order_date>'2024-01-01'
 
-Show customers who never placed an order.
+--🔵 Stage 3 — JOIN Queries (15 Queries)
 
-Show total products purchased per order.
+--Now we combine tables.
 
-Show employees with their department names.
+--Show all orders with customer names.
+select o.order_id,c.first_name,c.last_name,o.order_date 
+from orders o join customers c 
+on o.customer_id=c.customer_id
 
-Show:
 
-customer name
-product name
-quantity
+SELECT o.order_id,
+       c.first_name + ' ' + c.last_name AS customer_name,
+       o.order_date
+FROM orders o
+JOIN customers c
+ON o.customer_id = c.customer_id;
 
-Show products that were never ordered.
+select o.order_id ,c.first_name + ' ' + c.last_name as customer_name
+from orders o
+join customers c
+on c.customer_id=o.customer_id
 
-Show orders with total quantity purchased.
+--Show order details with product names.
 
-Show number of orders per customer.
 
-Show the most ordered product.
+select oi.order_id,p.product_name,oi.quantity,oi.price
+from order_items oi
+join products p
+on oi.product_id=p.product_id
 
-Show department with number of employees.
 
-🟣 Stage 4 — Aggregation & Analytics (10 Queries)
+select * from orders
+select * from customers
+select * from products
+select * from order_items
 
-Practice GROUP BY, HAVING, aggregates.
+--Show:
 
-Find total sales amount per order.
+--customer name
+--order id
+--order date
 
-Find total revenue generated by each product.
+--Show products purchased in each order.
 
-Find customers who spent more than 5000.
+--Show:
 
-Find the average product price.
+--order_id
+--product_name
+--quantity
+--price
 
-Find the product with highest price.
+--Show customers who placed orders.
 
-Find total number of orders per day.
+select distinct c.first_name +' ' +c.last_name as customer_name,o.order_id,o.order_date
+from customers c 
+join orders o
+on c.customer_id=o.customer_id
 
-Find total products sold per product.
+--Show customers who never placed an order.
+select first_name +' ' +last_name as customer_name
+from customers
+where customer_id not in (select customer_id from orders)
 
-Find departments with more than 3 employees.
+--Show total products purchased per order.
+select order_id ,sum(quantity)as total_quantity
+from order_items
+group by order_id
 
-Find the total revenue per customer.
+--Show employees with their department names.
+select e.first_name + ' ' + e.last_name as employee_name,d.department_name
+from employees e
+join department d
+on e.department_id=d.department_id
 
-Find the most valuable customer (highest spending).
+--Show:
 
-🔴 Stage 5 — Advanced SQL (Window Functions, Subqueries) (5 Queries)
+--customer name
+--product name
+--quantity
 
-Rank products by price using RANK().
+select c.first_name +' ' +c.last_name as customer_name,p.product_name,oi.quantity
+from customers c
+join orders o
+on c.customer_id=o.customer_id
+join order_items oi
+on o.order_id=oi.order_id
+join products p
+on p.product_id=oi.product_id
 
-Find the top 3 most expensive products using window functions.
+--Show products that were never ordered.
+select product_name from products where product_id not in(select product_id from order_items)
 
-Find the running total of sales by order date.
+select * from products
+select * from orders
+select * from order_items
 
-Find customers whose spending is above average.
 
-Find the second highest priced product.
+--Show orders with total quantity purchased.
+select order_id ,sum(quantity) total_quantity from order_items 
+group by order_id
+
+
+--Show number of orders per customer.
+select c.first_name + ' ' +c.last_name as customer_name ,count(order_id)as total_orders
+from customers c
+join orders o 
+on c.customer_id=o.customer_id
+group by c.first_name + ' ' +c.last_name
+
+--Show the most ordered product.
+select c.first_name + ' ' +c.last_name as customer_name ,count(order_id)as total_orders
+from customers c
+join orders o 
+on c.customer_id=o.customer_id
+group by c.first_name + ' ' +c.last_name
+order by total_orders desc
+
+SELECT TOP 1 p.product_name,
+       SUM(oi.quantity) AS total_orders
+FROM order_items oi
+JOIN products p
+ON oi.product_id = p.product_id
+GROUP BY p.product_name
+ORDER BY total_orders DESC;
+
+--Show number of orders per customer.
+select c.first_name + ' ' +c.last_name as customer_name ,count(order_id)as total_orders
+from customers c
+join orders o 
+on c.customer_id=o.customer_id
+group by c.first_name + ' ' +c.last_name
+order by total_orders desc
+
+--Show department with number of employees.
+select d.department_name ,count(employee_id)as total_employees
+from department d
+join employees e
+on d.department_id=e.department_id
+group by d.department_name
+
+--🟣 Stage 4 — Aggregation & Analytics (10 Queries)
+
+--Practice GROUP BY, HAVING, aggregates.
+
+--Find total sales amount per order.
+select o.order_id, sum(oi.quantity*oi.price) as total_sales
+from order_items oi
+join  orders o
+on o.order_id=oi.order_id
+group by o.order_id
+order by total_sales desc
+
+
+--Find total revenue generated by each product.
+
+--Find customers who spent more than 5000.
+
+--Find the average product price.
+
+--Find the product with highest price.
+
+--Find total number of orders per day.
+
+--Find total products sold per product.
+
+--Find departments with more than 3 employees.
+
+--Find the total revenue per customer.
+
+--Find the most valuable customer (highest spending).
+
+--🔴 Stage 5 — Advanced SQL (Window Functions, Subqueries) (5 Queries)
+
+--Rank products by price using RANK().
+select product_name ,price,
+RANK() OVER(ORDER BY price DESC) AS price_rank from  products
+
+--Find the top 3 most expensive products using window functions.
+select * from ( select product_name ,
+price,RANK() OVER(ORDER BY PRICE DESC) AS price_rank from  products) as ranked_products
+where price_rank <=3
+
+--Find the running total of sales by order date.
+--SELECT order_date,
+--price,
+--sum(price) OVER(ORDER BY order_date) AS running_total
+--from orders
+
+--Find customers whose spending is above average.
+SELECT *
+FROM (
+SELECT 
+c.customer_id,
+SUM(p.price * oi.quantity) AS total_spent,
+AVG(SUM(p.price * oi.quantity)) OVER() AS avg_spent
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+JOIN order_items oi ON o.order_id = oi.order_id
+JOIN products p ON oi.product_id = p.product_id
+GROUP BY c.customer_id
+) t
+WHERE total_spent > avg_spent;
+
+--Find the second highest priced product.
+
+
+ALTER TABLE employees
+ADD salary INT,
+manager_id INT;
+
+UPDATE employees SET salary = 90000, manager_id = NULL WHERE employee_id = 1;
+UPDATE employees SET salary = 70000, manager_id = 1 WHERE employee_id = 2;
+UPDATE employees SET salary = 60000, manager_id = 1 WHERE employee_id = 3;
+UPDATE employees SET salary = 55000, manager_id = 2 WHERE employee_id = 4;
+UPDATE employees SET salary = 50000, manager_id = 2 WHERE employee_id = 5;
+UPDATE employees SET salary = 45000, manager_id = 3 WHERE employee_id = 6;
+UPDATE employees SET salary = 45000, manager_id = 3 WHERE employee_id = 7;
+UPDATE employees SET salary = 40000, manager_id = 4 WHERE employee_id = 8;
+UPDATE employees SET salary = 38000, manager_id = 4 WHERE employee_id = 9;
+UPDATE employees SET salary = 35000, manager_id = 5 WHERE employee_id = 10;
+
+
+INSERT INTO customers(first_name,last_name,email,phone)
+VALUES
+('Amit','Sharma','amitduplicate@gmail.com','9999990001'),
+('Amit','Sharma','amitduplicate2@gmail.com','9999990002');
+
+INSERT INTO orders(customer_id,order_date)
+VALUES
+(2,'2024-04-01'),
+(3,'2024-04-02'),
+(4,'2024-04-03'),
+(5,'2024-04-04'),
+(6,'2024-04-05');
+
+
+INSERT INTO order_items(order_id,product_id,quantity,price)
+VALUES
+(19,1,1,75000),
+(19,3,1,20000),
+(20,2,2,30000),
+(21,4,3,2000),
+(22,5,2,1500),
+(23,6,5,800);
+
+
+INSERT INTO products(product_name,price,stock)
+VALUES
+('AI Camera',18000,20),
+('Smart Glasses',25000,15);
+
+
+INSERT INTO customers(first_name,last_name,email,phone)
+VALUES
+('NoOrder','Customer1','nocustomer1@gmail.com','888880001'),
+('NoOrder','Customer2','nocustomer2@gmail.com','888880002');
+
+
+DELETE FROM employees WHERE employee_id = 5;
+
+INSERT INTO orders(customer_id,order_date)
+VALUES
+(1,'2024-04-10');
+
+
+
+INSERT INTO order_items(order_id,product_id,quantity,price)
+VALUES
+(24,1,3,75000);
+
+
+--next level🔹 Level 1 — Core SQL (Very Common)
+1️⃣ Find the second highest salary.
+2️⃣ Find the Nth highest salary.
+3️⃣ Find duplicate rows in a table.
+
+Example idea:
+
+duplicate emails
+
+duplicate customers
+
+4️⃣ Delete duplicate rows but keep one record.
+5️⃣ Find employees who have the same salary.
+6️⃣ Find employees earning more than their manager.
+🔹 Level 2 — Joins + Aggregation
+7️⃣ Find the department with the highest average salary.
+8️⃣ Find total salary per department.
+9️⃣ Find employees who do not belong to any department.
+🔟 Find departments with no employees.
+1️⃣1️⃣ Find customers who never placed an order.
+1️⃣2️⃣ Find products that were never sold.
+🔹 Level 3 — Analytical Queries
+1️⃣3️⃣ Find top 3 highest-paid employees.
+1️⃣4️⃣ Rank employees by salary using window functions.
+1️⃣5️⃣ Find the highest salary in each department.
+1️⃣6️⃣ Find the second highest salary in each department.
+1️⃣7️⃣ Find the running total of sales.
+🔹 Level 4 — Real Business Problems
+1️⃣8️⃣ Find the most valuable customer (highest spending).
+1️⃣9️⃣ Find total revenue per product.
+2️⃣0️⃣ Find the best selling product.
+2️⃣1️⃣ Find the average order value.
+2️⃣2️⃣ Find customers who placed more than 3 orders.
+🔹 Level 5 — Advanced SQL
+2️⃣3️⃣ Find gaps in employee IDs.
+
+Example:
+
+1
+2
+3
+6
+7
+
+Missing → 4,5
+
+2️⃣4️⃣ Find consecutive order dates.
+2️⃣5️⃣ Find top 2 products per category/department.
+
+(This is a classic window function interview problem.)
