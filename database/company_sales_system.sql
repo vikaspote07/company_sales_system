@@ -688,3 +688,208 @@ Missing → 4,5
 2️⃣5️⃣ Find top 2 products per category/department.
 
 (This is a classic window function interview problem.)
+
+--T/SQL
+
+
+--T-SQL Practice Questions (Based on Your Level)
+--Level 1 — T-SQL Basics (Variables, IF, BEGIN END)
+--1️⃣ Find total revenue of a specific order
+
+Input: @order_id
+
+Return total sales.
+
+Example output
+
+Order 10 total = 79000
+
+Hint
+
+DECLARE @order_id INT = 10
+DECLARE @total DECIMAL(10,2)
+2️⃣ Check if a product is in stock
+
+Input: @product_id
+
+If stock > 0 → print Available
+Else → print Out of Stock
+
+Use
+
+IF...ELSE
+3️⃣ Find customer total spending
+
+Input: @customer_id
+
+Return total amount spent.
+
+Example
+
+Customer 1 spent 125000
+
+Use
+
+JOIN + variable
+4️⃣ Check if customer exists
+
+Input: @customer_id
+
+If exists
+
+PRINT 'Customer exists'
+
+Else
+
+PRINT 'Customer not found'
+5️⃣ Find expensive product
+
+Input price
+
+Example
+
+@price = 20000
+
+Return all products more expensive than that.
+
+Level 2 — Loops (WHILE)
+6️⃣ Print numbers from 1 to 10
+
+Using
+
+WHILE loop
+7️⃣ Calculate factorial
+
+Input
+
+@num = 5
+
+Output
+
+Factorial = 120
+8️⃣ Reduce stock after order
+
+Input
+
+@product_id
+@quantity
+
+Update stock using T-SQL.
+
+9️⃣ Insert 10 dummy customers using loop
+
+Example
+
+Customer1
+Customer2
+Customer3
+
+Use
+
+WHILE + INSERT
+🔟 Print all employees one by one
+
+Using
+
+CURSOR
+Level 3 — Stored Procedures (VERY IMPORTANT)
+
+Companies use Stored Procedures everywhere.
+
+1️⃣ Create procedure to get customer orders
+
+Procedure name
+
+GetCustomerOrders
+
+Input
+
+@customer_id
+
+Return
+
+order_id
+order_date
+total_amount
+2️⃣ Procedure to insert new product
+
+Procedure
+
+AddProduct
+
+Parameters
+
+@name
+@price
+@stock
+3️⃣ Procedure to update product price
+
+Input
+
+@product_id
+@new_price
+4️⃣ Procedure to find best selling product
+
+Return
+
+product_name
+total_sold
+5️⃣ Procedure to find customer spending
+
+Return
+
+customer_name
+total_spent
+Level 4 — Transactions (Company Critical)
+1️⃣ Create order transaction
+
+Steps
+
+1 Insert into orders
+2 Insert into order_items
+3 Reduce product stock
+
+If any step fails → rollback.
+
+Use
+
+BEGIN TRANSACTION
+COMMIT
+ROLLBACK
+2️⃣ Transfer stock between products
+
+Example
+
+Product A stock -5
+Product B stock +5
+Level 5 — Error Handling (TRY CATCH)
+1️⃣ Handle product stock error
+
+If stock < quantity
+
+Throw error
+
+Not enough stock
+
+Use
+
+TRY
+CATCH
+2️⃣ Prevent negative stock
+
+Before updating stock check condition.
+
+Level 6 — Advanced T-SQL (Real Company Problems)
+1️⃣ Find top 3 customers by revenue
+
+Use
+
+RANK()
+2️⃣ Find employees earning more than department average
+
+Use
+
+WINDOW FUNCTION
+3️⃣ Find customers whose order value > average order value
+4️⃣ Find most popular product per month
+5️⃣ Find running total of company revenue
